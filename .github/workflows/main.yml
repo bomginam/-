@@ -1,26 +1,32 @@
-name: Run Keyword Collector Daily
+name: 매일 키워드 수집 자동 실행
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 한국시간 매일 7AM (UTC 22시)
+    - cron: '0 21 * * *'  # 한국 시간 매일 오전 6시 (UTC 21시)
   workflow_dispatch:
 
 jobs:
-  run:
+  run-script:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: 리포지토리 체크아웃
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+    - name: Python 설치
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          pip install requests beautifulsoup4 pandas
-          pip install selenium webdriver-manager
+    - name: 의존성 설치
+      run: |
+        pip install requests beautifulsoup4 pandas
 
-      - name: Run keyword script
-        run: python collect_keywords.py
+    - name: 키워드 수집 스크립트 실행
+      run: python collect_keywords.py
+
+    - name: 아티팩트 업로드
+      uses: actions/upload-artifact@v4
+      with:
+        name: keywords-output
+        path: keywords_*.csv
